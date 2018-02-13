@@ -83,6 +83,7 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 	
 	public static void draw(BufferBuilder bufferBuilderIn)
 	{
+		
 		if(bufferBuilderIn instanceof BRBufferBuilder)
 		{
 			int bindedTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
@@ -101,7 +102,7 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 				
 				draw(builder);
 			}
-			if(flag)
+			if(flag || BufferedPlastic.plastic)
 			{
 				Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			}

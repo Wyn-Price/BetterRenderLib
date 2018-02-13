@@ -24,7 +24,6 @@ import com.wynprice.brl.addons.plastic.BufferedPlastic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -91,7 +90,6 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 			for(ResourceLocation location : ((BRBufferBuilder)bufferBuilderIn).builderMap.keySet())
 			{
 				BufferBuilder builder = ((BRBufferBuilder)bufferBuilderIn).builderMap.get(location);
-				
 				if(BufferedPlastic.plastic)
 					GlStateManager.bindTexture(BufferedPlastic.getTextureID());
 				else

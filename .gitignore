@@ -22,3 +22,4 @@ eclipse
 run
 
 *.py
+build-maven.log

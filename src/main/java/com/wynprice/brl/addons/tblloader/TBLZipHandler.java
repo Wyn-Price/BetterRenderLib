@@ -11,6 +11,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,8 +19,12 @@ import javax.imageio.ImageIO;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.wynprice.brl.BrlMod;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.util.ResourceLocation;
 
 public class TBLZipHandler 
@@ -40,14 +45,25 @@ public class TBLZipHandler
 	
 	public static TBLModel getZipFile(ResourceLocation location)
 	{
-		
+		BrlMod.LOGGER.info("Loading tbl model: " + location);
 		String errorFileName = "";
 		InputStream stream = null;
 		if(!location.getResourcePath().endsWith(".tbl"))
 		{
 			try
 			{
-				stream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(location.toString() + ".tbl")).getInputStream();
+				for(ResourcePackRepository.Entry entry : Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries())
+					try
+					{
+						stream = entry.getResourcePack().getInputStream(new ResourceLocation(location.toString() + ".tbl"));
+					}
+					catch (FileNotFoundException e) 
+					{
+						continue;
+					}
+				if(stream == null)
+					stream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(location.toString() + ".tbl")).getInputStream();
+
 			}
 			catch (IOException e2) 
 			{
@@ -57,7 +73,17 @@ public class TBLZipHandler
 		else
 			try
 			{
-				stream = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream();
+				for(ResourcePackRepository.Entry entry : Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries())
+					try
+					{
+						stream = entry.getResourcePack().getInputStream(location);
+					}
+					catch (FileNotFoundException e) 
+					{
+						continue;
+					}
+				if(stream == null)
+					stream = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream();
 			}
 			catch (IOException e2) 
 			{
@@ -69,12 +95,16 @@ public class TBLZipHandler
 			try
 			{
 				JsonParser paraser = new JsonParser();
-				JsonObject json = paraser.parse(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(location.getResourceDomain() + ":" + location.getResourcePath() + ".ptbl")).getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
-				if(json.has("tbl-parent"))
+				JsonObject json = paraser.parse(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(location.getResourceDomain() + ":" + location.getResourcePath() + ".json")).getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
+				if(json.has("parent"))
 				{
-					ResourceLocation loc = new ResourceLocation(json.get("tbl-parent").getAsString());
+					ResourceLocation loc = new ResourceLocation(json.get("parent").getAsString());
 					return getZipFile(new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath()));
 				}
+			}
+			catch (JsonSyntaxException e) //If not a json then just ignore it. 
+			{
+				;
 			}
 			catch (Exception e) 
 			{
@@ -84,7 +114,7 @@ public class TBLZipHandler
 		
 		if(stream == null)
 		{
-			new FileNotFoundException("Could not find file" + errorFileName)
+			new FileNotFoundException("Could not find file " + errorFileName)
 				.printStackTrace(CHARACTER_STREAM);
 			return null;
 		}

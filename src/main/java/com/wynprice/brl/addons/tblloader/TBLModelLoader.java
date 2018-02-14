@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.wynprice.brl.BrlMod;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -36,12 +37,14 @@ public class TBLModelLoader implements ICustomModelLoader
 				try
 				{
 					JsonParser paraser = new JsonParser();
-					JsonObject json = paraser.parse(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(modelLocation.getResourceDomain() + ":" + modelLocation.getResourcePath() + ".ptbl")).getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
-					if(json.has("tbl-parent"))
+					JsonObject json = paraser.parse(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(modelLocation.getResourceDomain() + ":" + modelLocation.getResourcePath() + ".json")).getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
+					if(json.has("parent"))
 					{
-						ResourceLocation loc = new ResourceLocation(json.get("tbl-parent").getAsString());
+						ResourceLocation loc = new ResourceLocation(json.get("parent").getAsString());
 						isDirect = accepts(new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath()));
 					}
+					else
+						isDirect = false;
 				}
 				catch (IOException e) 
 				{
@@ -61,7 +64,9 @@ public class TBLModelLoader implements ICustomModelLoader
 				isDirect = false;
 			}
 		}
-			
+		
+		if(isDirect)
+			BrlMod.LOGGER.info("Found tbl model: " + new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath()));
 		return isDirect;
 	}
 

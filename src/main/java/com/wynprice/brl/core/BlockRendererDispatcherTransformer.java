@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.BlockFluidRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
@@ -178,12 +179,8 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                         {
                         	if(bufferBuilderIn instanceof BRBufferBuilder)
                         		((BRBufferBuilder)bufferBuilderIn).split(info.getLocation());
-
-                        	{
-                        		if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
-                        			retBool = false;
-
-                        	}
+                        	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
+                    			retBool = false;
                         }
                         return retBool;
                     case ENTITYBLOCK_ANIMATED:

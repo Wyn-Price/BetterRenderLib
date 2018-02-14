@@ -6,13 +6,15 @@ import com.google.common.collect.Lists;
 import com.wynprice.brl.addons.plastic.BufferedPlastic;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.IClientCommand;
-import net.minecraftforge.event.CommandEvent;
 
 public class PlasticCommand implements IClientCommand
 {

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.wynprice.brl.addons.tblloader.TBLModelLoader;
+import com.wynprice.brl.config.EnumAddon;
 import com.wynprice.brl.handlers.PlasticCommand;
 import com.wynprice.brl.handlers.TextureStitch;
 
@@ -26,17 +27,9 @@ public class BrlMod
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		Object[] objects = 
-			{
-					new TextureStitch()
-			};
-		
-		ModelLoaderRegistry.registerLoader(new TBLModelLoader());
-				
-		for(Object o : objects)
-			MinecraftForge.EVENT_BUS.register(o);
-		
-		ClientCommandHandler.instance.registerCommand(new PlasticCommand());
+		for(EnumAddon addon : EnumAddon.values())
+			if(addon.isEnabled())
+				addon.getLoader().init();
 	}
 	
 	@EventHandler
